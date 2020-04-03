@@ -2,12 +2,15 @@ certifi==2019.11.28
 chardet==3.0.4
 cycler==0.10.0
 docutils==0.16
+get==2019.4.13
 idna==2.9
+joblib==0.14.1
 Kivy==1.11.1
 kivy-deps.glew==0.2.0
 kivy-deps.sdl2==0.2.0
 Kivy-Garden==0.1.4
 kivy.deps.angle==0.1.7
+kivymd==0.1.2
 kiwisolver==1.1.0
 matplotlib==3.2.0
 numpy==1.18.1
