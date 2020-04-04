@@ -1,0 +1,20 @@
+
+sqlite Database.db
+
+CREATE TABLE Posiciones_Equipos(
+   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+   Equipo CHAR(50),
+   Puntos INT NOT NULL,
+   Partidos_Jugados INT NOT NULL,
+   Partidos_Ganados INT NOT NULL,
+   Partidos_Empatados INT NOT NULL,
+   Partidos_Perdidos INT NOT NULL,
+   Goles_Favor INT NOT NULL,
+   Goles_Encontra INT NOT NULL,
+   Diferencia INT NOT NULL
+);
+
+INSERT INTO Posiciones_Equipos (Equipo,Puntos,Partidos_Jugados,Partidos_Ganados,Partidos_Empatados,Partidos_Perdidos,Goles_Favor,Goles_Encontra,Diferencia) VALUES ('Boca Juniors',48,23,14,6,3,35,8,27);
+
+
+

@@ -1,6 +1,8 @@
 import random
+import time
 
 from kivy.app import App
+
 from kivy.uix.modalview import ModalView
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
@@ -9,7 +11,7 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty
+from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty, StringProperty
 from kivy.clock import Clock
 from kivy.graphics import Color
 from kivy.core.window import Window
@@ -86,12 +88,13 @@ code = """
 #MDProgressBar:
 #value: progress_slider.value
 
-
+#screen_three  ScreenThree
 
 
 <ScreenOne>:
 
     AsyncImage:
+        id: partido
         source: 'E:\Desarrollo\KivyAPP\P_field2.jpg'
         size_hint: 1, 1
         pos_hint: {'center_x':0.5, 'center_y':0.55}
@@ -109,11 +112,22 @@ code = """
         pos:260,0
         opposite_colors: True
         on_release: root.manager.current='screen1'
+    
+    Label:
+        id:equipoAEnfrentar2
+        text: ''
+        pos: 0, 200
+        color:[3,2,1,1]
 
+    MDRaisedButton:
+        text: "Jugar"
+        elevation_normal: 2
+        opposite_colors: True
+        pos: 0, 200
+        on_release: root.jugar()
 
         
 <ScreenTwo>:
-       
 
     AsyncImage:
         source: 'E:\Desarrollo\KivyAPP\P_field2.jpg'
@@ -133,7 +147,8 @@ code = """
         elevation_normal: 2
         pos:260,0
         opposite_colors: True
-        on_release: root.manager.current='screen3'
+        on_release: root.manager.current='screen3' 
+        on_release: root.sendValues()
 
        
     Button:
@@ -403,9 +418,8 @@ code = """
     Label:
         id:equipoAEnfrentar
         text:'Elija un equipo'
-        markup:True
         pos: 0, 200
-        color:[3,2,1,1]
+        color:[203,200,200,1]
             
     MDRaisedButton:
         text: "Continue"
@@ -527,22 +541,228 @@ code = """
             valign: 'middle'
         
 '''
+
+Barcelona=[90] * 11
+
+class ScreenOne(Screen):
+    equipoElegido=''
+    jugadores=[]
+    lapos=1
+    latenencia=1
+    marcador=[0,0]
+    casi=[0,0]
+
+    def calculadora(num1, num2,num3):
+
+        total = num1 + num2
+        prob = random.randint(1, total)
+        tenencia=num3
+
+        if prob<= num1 and tenencia==1:
+            ScreenOne.lapos+=1
+
+        elif prob<= num1 and tenencia==0:
+            ScreenOne.lapos -= 1
+
+        elif prob>num1 and tenencia==1:
+            ScreenOne.lapos -= 1
+            ScreenOne.latenencia=0
+
+        elif prob> num1 and tenencia==0:
+            ScreenOne.lapos += 1
+            ScreenOne.latenencia = 1
+
+        elif ScreenOne.lapos== -1:
+            ScreenOne.tiro(tenencia)
+        else:
+            print("Se te escapo la Marmota")
+
+    def tiro(tenencia):
+        slash="\ ".replace(" ", "")
+        fuenteIMG='E:\Desarrollo\KivyAPP'+slash+'atacamos'
+
+
+        if tenencia==1:
+            print("Patea Nuestro Equipo")
+            ScreenOne.changeIMG1()
+            #ScreenOne.ids.partido.source= 'E:\Desarrollo\KivyAPP\atacamos'
+            time.sleep(2)
+            ata= random.choice( (ScreenOne.jugadores[10],ScreenOne.jugadores[9]  ) )
+            arq = Barcelona[0]
+            total=ata+ arq
+            prob = random.randint(1, total)
+            if prob <= ata:
+                ScreenOne.marcador[0]+=1
+                print("Gol Nuestro!!!",ScreenOne.marcador)
+                ScreenOne.lapos = 1
+                ScreenOne.latenencia = 0
+
+                time.sleep(2)
+            else:
+                print("Al palo y afuera")
+                ScreenOne.casi[0] += 1
+                time.sleep(1)
+                ScreenOne.lapos = 1
+                ScreenOne.latenencia = 0
+
+        if tenencia==0:
+            print("Patea el Rival")
+            time.sleep(2)
+            ata= random.choice(Barcelona)
+            arq = ScreenOne.jugadores[0]
+            total=ata+ arq
+            prob = random.randint(1, total)
+
+            if prob <= ata:
+                ScreenOne.marcador[1] += 1
+                print("Gol De Ellos",ScreenOne.marcador)
+                ScreenOne.lapos = 1
+                ScreenOne.latenencia = 1
+                time.sleep(2)
+            else:
+                print("Casi te la meten culia!!!!")
+                ScreenOne.casi[1]+=1
+                ScreenOne.lapos = 1
+                ScreenOne.latenencia = 1
+                time.sleep(2)
+
+    def jugar(self):
+        ScreenOne.marcador=[0,0]
+        ScreenOne.lapos = 1
+        ScreenOne.latenencia = 1
+
+        self.ids.equipoAEnfrentar2.text= self.equipoElegido
+        arquero=[self.jugadores[0]]
+        defensa=[self.jugadores[1],self.jugadores[2],self.jugadores[3],self.jugadores[4] ]
+        mediocampistas = [self.jugadores[5], self.jugadores[6], self.jugadores[7], self.jugadores[8]]
+        atacantes = [self.jugadores[9],self.jugadores[10]]
+        totalMedio=0
+        totalDefensa=0
+        totalAtaque=0
+        for i in range(len(mediocampistas)):
+            totalMedio+=mediocampistas[i]
+
+        for i in range(len(defensa)):
+            totalDefensa+=defensa[i]
+
+        for i in range(len(atacantes)):
+            totalAtaque+=atacantes[i]
+
+        totalAtaqueEnemigo=90*2
+        totalMedioEnemigo=90*4
+        totalDefensaEnemigo=90*4
+
+        #inicia partido 0              1                  2                     3
+        posiciones=['Patean_Ellos','Defensa','Medio_Campo','Ataque','Patear']
+
+        #pos=1
+        #tenencia=1
+
+        print("Inicia Partido")
+
+        for i in range(100):
+
+            if ScreenOne.lapos==1 and ScreenOne.latenencia==1:
+                # Si yo tengo la pelota en el medio campo
+                ScreenOne.calculadora(totalMedio,totalMedioEnemigo,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==1 and ScreenOne.latenencia==0:
+                # Comparacion de medios
+                ScreenOne.calculadora(totalMedioEnemigo,totalMedio,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==0 and ScreenOne.latenencia==1:
+                # Nosotros en defensa contra el ataque
+                ScreenOne.calculadora(totalDefensa, totalAtaqueEnemigo,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==0 and ScreenOne.latenencia==1:
+                # Nosotros en ataque y el se defiende
+                ScreenOne.calculadora(totalAtaqueEnemigo,totalDefensa,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==2 and ScreenOne.latenencia==1:
+                #
+                ScreenOne.calculadora(totalAtaque, totalDefensaEnemigo,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==2 and ScreenOne.latenencia==0:
+                ScreenOne.calculadora(totalDefensaEnemigo,totalAtaque,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==0 and ScreenOne.latenencia==0:
+                ScreenOne.calculadora(totalAtaqueEnemigo, totalDefensa,ScreenOne.latenencia)
+
+            elif ScreenOne.lapos==-1 and ScreenOne.latenencia==0:
+                ScreenOne.tiro(ScreenOne.latenencia)
+
+            if ScreenOne.lapos==3:
+                ScreenOne.tiro(ScreenOne.latenencia)
+
+
+        print("Partido Finalizado",ScreenOne.marcador)
+        print("Cantidad de llegadas nuestras vs adversario",ScreenOne.casi)
+
+    def on_pre_enter(self):
+        pass
+
+    def changeIMG1(self):
+        slash="\ ".replace(" ","")
+        self.ids.partido.source="E:\Desarrollo\KivyAPP"+slash+"atacamo"
+
+
+
+
+
+
+
+    def getValue(self):
+        progresBarValue = str(self.ids.progress_slider.value)
+        print(round(float(progresBarValue), 2))
+
+    def setPlayerValue(self):
+
+        self.content = BoxLayout()
+        self.progress_slider = MDSlider(min=0, max=100)
+        self.content.add_widget(self.progress_slider)
+
+        self.label = MDLabel(text=str(self.progress_slider.value))
+        self.content.add_widget(self.label)
+
+        self.view = ModalView(auto_dismiss=True,
+                              height=(400),
+                              width=(300),
+                              size_hint=(.8, .5))
+
+        self.content.add_widget(
+            MDRaisedButton(text='Accept', opposite_colors=True,
+                           on_press=self.view.dismiss,
+                           pos=(300, 500)))
+
+        self.view.add_widget(self.content)
+
+        # bind the on_press event of the button to the dismiss function
+        self.content.bind(on_press=self.view.dismiss)
+
+        # open the view
+        self.view.open(animation=True)
+
+
 class ScreenThree(Screen):
 
     def teamSelect(self,name):
         self.ids.equipoAEnfrentar.text="El equipo a enfrentar es: "+str(name)
-
+        ScreenOne.equipoElegido = self.ids.equipoAEnfrentar.text
 
 
 class ScreenTwo(Screen):
 
     def on_pre_enter(self):
         if self.ids.points.value == 0 and self.ids.arquero.value==0 :
-            self.ids.points.value =random.randint(400,450)
+            self.ids.points.value =random.randint(800,1000)
 
+    def sendValues(self):
+        jugadores = [self.ids.arquero.value, self.ids.def1.value, self.ids.def2.value, self.ids.def3.value,self.ids.def4.value,
+                     self.ids.med1.value, self.ids.med2.value, self.ids.med3.value, self.ids.med4.value,
+                     self.ids.ata1.value, self.ids.ata2.value]
+        ScreenOne.jugadores = jugadores
 
     def setPlayerValue(self,quien,valor):
-        print(quien,valor)
         if (self.ids.points.value)>100:
             sum=30
         elif 100>(self.ids.points.value)>10:
@@ -577,7 +797,9 @@ class ScreenTwo(Screen):
             self.ids.points.value -= sum
 
         elif self.ids.points.value==0:
-            print("Else")
+
+
+
 
             content = MDLabel(font_style='Body1',halign='center',
                               theme_text_color='Secondary',
@@ -594,17 +816,6 @@ class ScreenTwo(Screen):
             self.dialog.add_action_button("Dismiss",
                                           action=lambda *x: self.dialog.dismiss())
             self.dialog.open()
-
-        #quien=str(quien)
-
-
-        #print(self.ids.quien.value)
-        #print(self.ids.arquero.value)
-
-        #val1=int(id.value)
-        #valor=int(val1)+1
-        #id.value=str(valor)
-
 
 
 
@@ -632,81 +843,6 @@ class Registers(Screen):
 
     def close(instance):
         App.get_running_app().stop()
-
-
-class ScreenOne(Screen):
-    def getValue(self):
-        progresBarValue= str(self.ids.progress_slider.value)
-        print(round( float(progresBarValue),2) )
-
-    def setPlayerValue(self):
-        #playerStat = str(self.ids.progress_slider.value)
-
-        #self.content= MDSpinner()
-        #self.content.add_widget()
-        #self.content.open()
-
-
-        self.content=BoxLayout()
-        self.progress_slider=MDSlider(min=0,max=100)
-        self.content.add_widget(self.progress_slider)
-
-        self.label=MDLabel(text= str(self.progress_slider.value)  )
-        self.content.add_widget(self.label)
-
-        self.view = ModalView(auto_dismiss=True,
-                         height=(400),
-                         width=(300),
-                         size_hint=(.8, .5))
-
-        self.content.add_widget(
-            MDRaisedButton(text='Accept', opposite_colors=True,
-                           on_press=self.view.dismiss,
-                           pos=(300, 500)))
-
-        self.view.add_widget(self.content)
-
-
-
-        # bind the on_press event of the button to the dismiss function
-        self.content.bind(on_press=self.view.dismiss)
-
-        # open the view
-        self.view.open(animation=True)
-
-        '''
-        self.popup =Popup(     title=" Hola ",title_color=(500, 500, 500, 10),title_align='center',
-                               content=self.content,
-                               size_hint=(.5, .3),
-                               height=(400),
-                               width=(300),
-                               auto_dismiss=True
-                               ,background='white')
-                               #,font_color='White')
-
-        self.popup.open()
-        
-
-       
-
-
-        self.dialog = MDDialog(title="Hola",
-                               content=content,
-                               size_hint=(.5, .3),
-                               height=(400),
-                               width=(300),
-                               auto_dismiss=True,
-                               size_hint_y=None )
-
-        self.dialog.add_action_button("Dismiss",action=lambda *x: self.dialog.dismiss())
-        #self.dialog.bind(content)
-        #self.dialog.add_widget()
-
-     '''
-
-
-
-
 
 
 
