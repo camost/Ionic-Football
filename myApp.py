@@ -2,6 +2,7 @@ import random
 import time
 
 from kivy.app import App
+from kivy.uix.image import AsyncImage
 
 from kivy.uix.modalview import ModalView
 from kivy.uix.popup import Popup
@@ -32,21 +33,6 @@ from kivymd.button import MDIconButton
 
 from KivyMD.build.lib.kivymd.button import MDRaisedButton
 
-'''
-    GridLayout:
-
-        MDLabel:
-            text:str(round(progress_slider.value,2 ))
-
-        MDSlider:
-            id:progress_slider
-            min:0
-            max:100
-            value: 0
-            
-    
-
-'''
 
 code = """ 
 
@@ -85,19 +71,9 @@ code = """
 #:import MDThemePicker kivymd.theme_picker.MDThemePicker
 #:import MDBottomNavigation kivymd.tabs.MDBottomNavigation
 #:import MDBottomNavigationItem kivymd.tabs.MDBottomNavigationItem
-#MDProgressBar:
-#value: progress_slider.value
-
-#screen_three  ScreenThree
-
-
 <ScreenOne>:
 
-    AsyncImage:
-        id: partido
-        source: 'E:\Desarrollo\KivyAPP\P_field2.jpg'
-        size_hint: 1, 1
-        pos_hint: {'center_x':0.5, 'center_y':0.55}
+
 
 
     MDRaisedButton:
@@ -113,26 +89,38 @@ code = """
         opposite_colors: True
         on_release: root.manager.current='screen1'
     
-    Label:
-        id:equipoAEnfrentar2
-        text: ''
-        pos: 0, 200
-        color:[3,2,1,1]
 
     MDRaisedButton:
         text: "Jugar"
         elevation_normal: 2
         opposite_colors: True
-        pos: 0, 200
+        pos: 150, 0
         on_release: root.jugar()
 
         
 <ScreenTwo>:
 
+
     AsyncImage:
-        source: 'E:\Desarrollo\KivyAPP\P_field2.jpg'
+        source: 'P_field2.jpg'
         size_hint: 1, 1
         pos_hint: {'center_x':0.5, 'center_y':0.55}
+    
+        
+    MDRaisedButton:
+        text: ""
+        elevation_normal: 2
+        pos: 300, 550
+        size_hint: 0.15, 0.06
+        opposite_colors: True
+        on_release: root.distribute() 
+
+        Image:
+            id:balance
+            source: 'balance.png'
+            size: 40, 40
+            pos: 300, 550
+
         
     Label:
         id:points
@@ -167,7 +155,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 155, 550
             
@@ -189,7 +177,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 115, 440
             
@@ -211,7 +199,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 35, 440
     
@@ -232,7 +220,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 195, 440
 
@@ -253,7 +241,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 275, 440
             
@@ -275,7 +263,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 275, 300
     
@@ -297,7 +285,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 195, 300
 
@@ -320,7 +308,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 115, 300
     
@@ -343,7 +331,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 35, 300
 
@@ -365,7 +353,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 75, 200
 
@@ -386,7 +374,7 @@ code = """
         value:0
     
         Image:
-            source: 'E:\Desarrollo\KivyAPP\person.png'
+            source: 'person.png'
             size: 50, 50
             pos: 235, 200
 
@@ -519,38 +507,50 @@ code = """
 """
 
 '''
-    name:'registers'
-    container: container
-    BoxLayout:
-        orientation: 'vertical'
-        Button:
-            text: 'Return to Login'
-            on_press: root.manager.current = 'screen1'
-        Button:
-            text: 'Next Screen'
-            on_press: root.manager.current = 'screen2'
-        BoxLayout:
-            id: container
-            orientation: 'vertical'
-            
-            
-            Label:
-            markup: True
-            text: '[b] Type something... [/b]'
-            halign: 'center'
-            valign: 'middle'
-        
+    AsyncImage:
+        id: partido
+        source: 'P_field2.jpg'
+        size_hint: 1, 1
+        pos_hint: {'center_x':0.5, 'center_y':0.55}
 '''
 
 Barcelona=[90] * 11
 
 class ScreenOne(Screen):
     equipoElegido=''
-    jugadores=[]
+    jugadores=[0]*11
     lapos=1
     latenencia=1
     marcador=[0,0]
     casi=[0,0]
+    totalPoints=random.randint(800,1000)
+    inicio=0
+    event=0
+
+    #self.ids.equipoAEnfrentar2.text = equipoElegido
+    arquero = [jugadores[0]]
+    defensa = [jugadores[1], jugadores[2], jugadores[3], jugadores[4]]
+    mediocampistas = [jugadores[5],jugadores[6], jugadores[7], jugadores[8]]
+    atacantes = [jugadores[9], jugadores[10]]
+    totalMedio = 0
+    totalDefensa = 0
+    totalAtaque = 0
+    for i in range(len(mediocampistas)):
+        totalMedio += mediocampistas[i]
+
+    for i in range(len(defensa)):
+        totalDefensa += defensa[i]
+
+    for i in range(len(atacantes)):
+        totalAtaque += atacantes[i]
+
+    totalAtaqueEnemigo = 90 * 2
+    totalMedioEnemigo = 90 * 4
+    totalDefensaEnemigo = 90 * 4
+
+    fondo= AsyncImage(id='partido',source='P_field2.JPG', size_hint=(1,1))
+    comentario= Label(id='comentarios',text='',pos=(0,200),color=[3,2,1,1])
+
 
     def calculadora(num1, num2,num3):
 
@@ -572,42 +572,47 @@ class ScreenOne(Screen):
             ScreenOne.lapos += 1
             ScreenOne.latenencia = 1
 
-        elif ScreenOne.lapos== -1:
-            ScreenOne.tiro(tenencia)
         else:
             print("Se te escapo la Marmota")
 
-    def tiro(tenencia):
-        slash="\ ".replace(" ", "")
-        fuenteIMG='E:\Desarrollo\KivyAPP'+slash+'atacamos'
+        if ScreenOne.lapos==0:
+            ScreenOne.changeIMG1('Ellos Atacan')
+            ScreenOne.comentario.text = 'Ellos Atacan'
+        elif ScreenOne.lapos==1:
+            ScreenOne.changeIMG1('En el Medio')
+            ScreenOne.comentario.text = 'Pelea en el medio Campo'
+        else:
+            ScreenOne.changeIMG1('Nosotros Atacamos')
+            ScreenOne.comentario.text = 'Ataque nuestro'
 
+
+    def tiro(tenencia):
 
         if tenencia==1:
             print("Patea Nuestro Equipo")
-            ScreenOne.changeIMG1()
-            #ScreenOne.ids.partido.source= 'E:\Desarrollo\KivyAPP\atacamos'
-            time.sleep(2)
+            ScreenOne.changeIMG1('Nosotros Atacamos')
+
             ata= random.choice( (ScreenOne.jugadores[10],ScreenOne.jugadores[9]  ) )
             arq = Barcelona[0]
             total=ata+ arq
             prob = random.randint(1, total)
             if prob <= ata:
                 ScreenOne.marcador[0]+=1
-                print("Gol Nuestro!!!",ScreenOne.marcador)
+                print("Golazo Nuestro!!!",ScreenOne.marcador)
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 0
-
-                time.sleep(2)
             else:
+                ScreenOne.comentario.text = 'Al palo y afuera!'+str(ScreenOne.marcador)
                 print("Al palo y afuera")
                 ScreenOne.casi[0] += 1
-                time.sleep(1)
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 0
 
         if tenencia==0:
+            ScreenOne.changeIMG1('Ellos Atacan')
+            ScreenOne.comentario.text = 'Patea el Rival!'
             print("Patea el Rival")
-            time.sleep(2)
+
             ata= random.choice(Barcelona)
             arq = ScreenOne.jugadores[0]
             total=ata+ arq
@@ -615,133 +620,121 @@ class ScreenOne(Screen):
 
             if prob <= ata:
                 ScreenOne.marcador[1] += 1
+                ScreenOne.comentario.text = 'Gol!! del Rival'+str(ScreenOne.marcador)
                 print("Gol De Ellos",ScreenOne.marcador)
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 1
-                time.sleep(2)
+                #time.sleep(2)
             else:
+                ScreenOne.comentario.text = 'Casi te la meten Culia!!!!!!!!!!'
                 print("Casi te la meten culia!!!!")
                 ScreenOne.casi[1]+=1
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 1
-                time.sleep(2)
+                #time.sleep(2)
 
     def jugar(self):
         ScreenOne.marcador=[0,0]
         ScreenOne.lapos = 1
         ScreenOne.latenencia = 1
 
-        self.ids.equipoAEnfrentar2.text= self.equipoElegido
-        arquero=[self.jugadores[0]]
-        defensa=[self.jugadores[1],self.jugadores[2],self.jugadores[3],self.jugadores[4] ]
-        mediocampistas = [self.jugadores[5], self.jugadores[6], self.jugadores[7], self.jugadores[8]]
-        atacantes = [self.jugadores[9],self.jugadores[10]]
-        totalMedio=0
-        totalDefensa=0
-        totalAtaque=0
-        for i in range(len(mediocampistas)):
-            totalMedio+=mediocampistas[i]
-
-        for i in range(len(defensa)):
-            totalDefensa+=defensa[i]
-
-        for i in range(len(atacantes)):
-            totalAtaque+=atacantes[i]
-
-        totalAtaqueEnemigo=90*2
-        totalMedioEnemigo=90*4
-        totalDefensaEnemigo=90*4
-
         #inicia partido 0              1                  2                     3
         posiciones=['Patean_Ellos','Defensa','Medio_Campo','Ataque','Patear']
 
-        #pos=1
-        #tenencia=1
+        arquero = [ScreenOne.jugadores[0]]
+        defensa = [ScreenOne.jugadores[1], ScreenOne.jugadores[2], ScreenOne.jugadores[3], ScreenOne.jugadores[4]]
+        mediocampistas = [ScreenOne.jugadores[5], ScreenOne.jugadores[6], ScreenOne.jugadores[7], ScreenOne.jugadores[8]]
+        atacantes = [ScreenOne.jugadores[9], ScreenOne.jugadores[10]]
+        ScreenOne.totalMedio = 0
+        ScreenOne.totalDefensa = 0
+        ScreenOne.totalAtaque = 0
+        for i in range(len(mediocampistas)):
+            ScreenOne.totalMedio += mediocampistas[i]
 
-        print("Inicia Partido")
+        for i in range(len(defensa)):
+            ScreenOne.totalDefensa += defensa[i]
 
-        for i in range(100):
+        for i in range(len(atacantes)):
+            ScreenOne.totalAtaque += atacantes[i]
 
+        ScreenOne.totalAtaqueEnemigo = 90 * 2
+        ScreenOne.totalMedioEnemigo = 90 * 4
+        ScreenOne.totalDefensaEnemigo = 90 * 4
+
+        ScreenOne.comentario.text='Inicia el partido'
+
+        ScreenOne.inicio=time.time()
+        ScreenOne.event=Clock.schedule_interval(ScreenOne.jugada, 0.5)
+        #ScreenOne.event.timeout=8
+
+    def jugada(self):
+        partido_finalizado=False
+        if round(time.time()-ScreenOne.inicio) >= 10:
+            partido_finalizado=True
+            #Clock.unschedule(ScreenOne.jugada)
+            Clock.unschedule(ScreenOne.event, all=True)
+            #ScreenOne.event.cancel()
+
+        if partido_finalizado!=True:
             if ScreenOne.lapos==1 and ScreenOne.latenencia==1:
-                # Si yo tengo la pelota en el medio campo
-                ScreenOne.calculadora(totalMedio,totalMedioEnemigo,ScreenOne.latenencia)
+                # Si yo tengo la pelota en el medio campo contra su medo
+                ScreenOne.calculadora(ScreenOne.totalMedio,ScreenOne.totalMedioEnemigo,ScreenOne.latenencia)
 
             elif ScreenOne.lapos==1 and ScreenOne.latenencia==0:
-                # Comparacion de medios
-                ScreenOne.calculadora(totalMedioEnemigo,totalMedio,ScreenOne.latenencia)
+                # Si ellos tienen la pelota en el medio campo contra nuestro medio
+                ScreenOne.calculadora(ScreenOne.totalMedioEnemigo,ScreenOne.totalMedio,ScreenOne.latenencia)
 
             elif ScreenOne.lapos==0 and ScreenOne.latenencia==1:
                 # Nosotros en defensa contra el ataque
-                ScreenOne.calculadora(totalDefensa, totalAtaqueEnemigo,ScreenOne.latenencia)
-
-            elif ScreenOne.lapos==0 and ScreenOne.latenencia==1:
-                # Nosotros en ataque y el se defiende
-                ScreenOne.calculadora(totalAtaqueEnemigo,totalDefensa,ScreenOne.latenencia)
+                ScreenOne.calculadora(ScreenOne.totalDefensa, ScreenOne.totalAtaqueEnemigo,ScreenOne.latenencia)
 
             elif ScreenOne.lapos==2 and ScreenOne.latenencia==1:
-                #
-                ScreenOne.calculadora(totalAtaque, totalDefensaEnemigo,ScreenOne.latenencia)
+                # Nosotros atacamos contra su defensa
+                ScreenOne.calculadora(ScreenOne.totalAtaque, ScreenOne.totalDefensaEnemigo,ScreenOne.latenencia)
 
             elif ScreenOne.lapos==2 and ScreenOne.latenencia==0:
-                ScreenOne.calculadora(totalDefensaEnemigo,totalAtaque,ScreenOne.latenencia)
+                # Ellos la tienen en defensa
+                ScreenOne.calculadora(ScreenOne.totalDefensaEnemigo,ScreenOne.totalAtaque,ScreenOne.latenencia)
 
             elif ScreenOne.lapos==0 and ScreenOne.latenencia==0:
-                ScreenOne.calculadora(totalAtaqueEnemigo, totalDefensa,ScreenOne.latenencia)
+                # Ellos nos atacan
+                ScreenOne.calculadora(ScreenOne.totalAtaqueEnemigo, ScreenOne.totalDefensa,ScreenOne.latenencia)
 
             elif ScreenOne.lapos==-1 and ScreenOne.latenencia==0:
+                # Ellos van a patear
                 ScreenOne.tiro(ScreenOne.latenencia)
 
-            if ScreenOne.lapos==3:
+            elif ScreenOne.lapos==3 and ScreenOne.latenencia==1:
+
+                #ScreenOne.changeIMG1('Nosotros Atacamos')
                 ScreenOne.tiro(ScreenOne.latenencia)
+            else:
+                print("Algo fallo",ScreenOne.lapos, ScreenOne.latenencia)
+        else:
+            print("Partido FINALIZADOSSS")
+            ScreenOne.changeIMG1('Partido Finalizado')
 
-
-        print("Partido Finalizado",ScreenOne.marcador)
-        print("Cantidad de llegadas nuestras vs adversario",ScreenOne.casi)
 
     def on_pre_enter(self):
-        pass
-
-    def changeIMG1(self):
-        slash="\ ".replace(" ","")
-        self.ids.partido.source="E:\Desarrollo\KivyAPP"+slash+"atacamo"
-
-
+        try:
+            self.add_widget(self.fondo)
+            self.add_widget(self.comentario)
+        except:
+            ScreenOne.fondo.source='P_field2'
 
 
-
-
-
-    def getValue(self):
-        progresBarValue = str(self.ids.progress_slider.value)
-        print(round(float(progresBarValue), 2))
-
-    def setPlayerValue(self):
-
-        self.content = BoxLayout()
-        self.progress_slider = MDSlider(min=0, max=100)
-        self.content.add_widget(self.progress_slider)
-
-        self.label = MDLabel(text=str(self.progress_slider.value))
-        self.content.add_widget(self.label)
-
-        self.view = ModalView(auto_dismiss=True,
-                              height=(400),
-                              width=(300),
-                              size_hint=(.8, .5))
-
-        self.content.add_widget(
-            MDRaisedButton(text='Accept', opposite_colors=True,
-                           on_press=self.view.dismiss,
-                           pos=(300, 500)))
-
-        self.view.add_widget(self.content)
-
-        # bind the on_press event of the button to the dismiss function
-        self.content.bind(on_press=self.view.dismiss)
-
-        # open the view
-        self.view.open(animation=True)
-
+    def changeIMG1(img):
+        if img=='Ellos Atacan':
+            ScreenOne.fondo.source = 'nosAtacan.JPG'
+        elif img=='Nosotros Atacamos':
+            ScreenOne.fondo.source='atacamos.JPG'
+        elif img=='En el Medio':
+            ScreenOne.fondo.source = 'en el medio.JPG'
+        elif img=='Partido Finalizado':
+            ScreenOne.fondo.source = 'P_field2'
+            ScreenOne.comentario.text = 'Partido Finalizado' + str(ScreenOne.marcador)
+        else:
+            print("Else")
 
 class ScreenThree(Screen):
 
@@ -753,14 +746,57 @@ class ScreenThree(Screen):
 class ScreenTwo(Screen):
 
     def on_pre_enter(self):
-        if self.ids.points.value == 0 and self.ids.arquero.value==0 :
-            self.ids.points.value =random.randint(800,1000)
+        self.ids.points.value=ScreenOne.totalPoints
+
 
     def sendValues(self):
         jugadores = [self.ids.arquero.value, self.ids.def1.value, self.ids.def2.value, self.ids.def3.value,self.ids.def4.value,
                      self.ids.med1.value, self.ids.med2.value, self.ids.med3.value, self.ids.med4.value,
                      self.ids.ata1.value, self.ids.ata2.value]
         ScreenOne.jugadores = jugadores
+
+
+    def distribute(self):
+
+        if self.ids.balance.source=='balance.png':
+            equalpoints=(ScreenOne.totalPoints )//11
+
+            self.ids.points.value= self.ids.points.value - (equalpoints*11)
+
+            self.ids.arquero.value=equalpoints
+            self.ids.def1.value=equalpoints
+            self.ids.def2.value=equalpoints
+            self.ids.def3.value=equalpoints
+            self.ids.def4.value=equalpoints
+            self.ids.med1.value=equalpoints
+            self.ids.med2.value=equalpoints
+            self.ids.med3.value=equalpoints
+            self.ids.med4.value=equalpoints
+            self.ids.ata1.value=equalpoints
+            self.ids.ata2.value=equalpoints
+
+            self.ids.balance.source='restart.png'
+
+            self.ids.points.value =(ScreenOne.totalPoints )%11
+
+        elif self.ids.balance.source=='restart.png':
+            self.ids.arquero.value=0
+            self.ids.def1.value=0
+            self.ids.def2.value=0
+            self.ids.def3.value=0
+            self.ids.def4.value=0
+            self.ids.med1.value=0
+            self.ids.med2.value=0
+            self.ids.med3.value=0
+            self.ids.med4.value=0
+            self.ids.ata1.value=0
+            self.ids.ata2.value=0
+
+            self.ids.balance.source = 'balance.png'
+            self.ids.points.value=ScreenOne.totalPoints
+
+
+
 
     def setPlayerValue(self,quien,valor):
         if (self.ids.points.value)>100:
@@ -797,8 +833,6 @@ class ScreenTwo(Screen):
             self.ids.points.value -= sum
 
         elif self.ids.points.value==0:
-
-
 
 
             content = MDLabel(font_style='Body1',halign='center',
@@ -843,8 +877,6 @@ class Registers(Screen):
 
     def close(instance):
         App.get_running_app().stop()
-
-
 
 
 class Manager(ScreenManager):
