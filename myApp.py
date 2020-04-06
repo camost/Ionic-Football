@@ -2,7 +2,8 @@ import random
 import time
 
 from kivy.app import App
-from kivy.uix.image import AsyncImage
+from kivy.core.audio import SoundLoader
+from kivy.uix.image import AsyncImage, Image
 
 from kivy.uix.modalview import ModalView
 from kivy.uix.popup import Popup
@@ -101,7 +102,7 @@ code = """
 <ScreenTwo>:
 
 
-    AsyncImage:
+    Image:
         source: 'P_field2.jpg'
         size_hint: 1, 1
         pos_hint: {'center_x':0.5, 'center_y':0.55}
@@ -523,7 +524,7 @@ class ScreenOne(Screen):
     latenencia=1
     marcador=[0,0]
     casi=[0,0]
-    totalPoints=random.randint(800,1000)
+    sound = SoundLoader.load('football-audience.mp3')
     inicio=0
     event=0
 
@@ -548,9 +549,13 @@ class ScreenOne(Screen):
     totalMedioEnemigo = 90 * 4
     totalDefensaEnemigo = 90 * 4
 
-    fondo= AsyncImage(id='partido',source='P_field2.JPG', size_hint=(1,1))
-    comentario= Label(id='comentarios',text='',pos=(0,200),color=[3,2,1,1])
+    fondo= Image(id='partido',source='P_field2.JPG', size_hint=(1,1),pos=(0,40))
+    comentario= Label(id='comentarios',text='',pos=(0,-265),color=[500,500,999,1])
 
+    if totalMedio>0 or totalAtaque>0 or totalDefensa>0:
+        pass
+    else:
+        totalPoints = random.randint(800, 1000)
 
     def calculadora(num1, num2,num3):
 
@@ -577,42 +582,47 @@ class ScreenOne(Screen):
 
         if ScreenOne.lapos==0:
             ScreenOne.changeIMG1('Ellos Atacan')
-            ScreenOne.comentario.text = 'Ellos Atacan'
+            ScreenOne.comentario.text = 'El Rival se Encuentra en Posicion de Ataque'
         elif ScreenOne.lapos==1:
             ScreenOne.changeIMG1('En el Medio')
             ScreenOne.comentario.text = 'Pelea en el medio Campo'
-        else:
+        elif ScreenOne.lapos==2:
             ScreenOne.changeIMG1('Nosotros Atacamos')
-            ScreenOne.comentario.text = 'Ataque nuestro'
+            ScreenOne.comentario.text = 'Nos Encontramos en Posicion de Ataque'
+        else:
+            pass
+
 
 
     def tiro(tenencia):
 
         if tenencia==1:
-            print("Patea Nuestro Equipo")
             ScreenOne.changeIMG1('Nosotros Atacamos')
-
+            ScreenOne.comentario.text = 'Pateamos al Arco!!'
             ata= random.choice( (ScreenOne.jugadores[10],ScreenOne.jugadores[9]  ) )
             arq = Barcelona[0]
             total=ata+ arq
             prob = random.randint(1, total)
             if prob <= ata:
                 ScreenOne.marcador[0]+=1
-                print("Golazo Nuestro!!!",ScreenOne.marcador)
+                sound = SoundLoader.load('grito-gol.mp3')
+                sound.play()
+                ScreenOne.comentario.text = 'Golazo!!! ' + str(ScreenOne.marcador[0])+ ' - ' + str(ScreenOne.marcador[1])
+                ScreenOne.fondo.source = 'OurGoal.JPG'
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 0
             else:
-                ScreenOne.comentario.text = 'Al palo y afuera!'+str(ScreenOne.marcador)
-                print("Al palo y afuera")
+                ScreenOne.comentario.text = 'Por Poco! Palo y Afuera!!!'
+                sound = SoundLoader.load('what-a-save.mp3')
+                sound.volume=0.2
+                sound.play()
                 ScreenOne.casi[0] += 1
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 0
 
         if tenencia==0:
             ScreenOne.changeIMG1('Ellos Atacan')
-            ScreenOne.comentario.text = 'Patea el Rival!'
-            print("Patea el Rival")
-
+            ScreenOne.comentario.text = 'El Rival se Encuentra en Posicion de Ataque!'
             ata= random.choice(Barcelona)
             arq = ScreenOne.jugadores[0]
             total=ata+ arq
@@ -620,14 +630,18 @@ class ScreenOne(Screen):
 
             if prob <= ata:
                 ScreenOne.marcador[1] += 1
-                ScreenOne.comentario.text = 'Gol!! del Rival'+str(ScreenOne.marcador)
-                print("Gol De Ellos",ScreenOne.marcador)
+                ScreenOne.comentario.text = 'Gol!! del Rival '+ str(ScreenOne.marcador[0])+ ' - ' + str(ScreenOne.marcador[1])
+                sound = SoundLoader.load('grito-gol.mp3')
+                sound.play()
+                ScreenOne.fondo.source = 'TheirGoal.JPG'
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 1
                 #time.sleep(2)
             else:
-                ScreenOne.comentario.text = 'Casi te la meten Culia!!!!!!!!!!'
-                print("Casi te la meten culia!!!!")
+                ScreenOne.comentario.text = 'Salva el Arquero!!!'
+                sound = SoundLoader.load('what-a-save.mp3')
+                sound.volume = 0.2
+                sound.play()
                 ScreenOne.casi[1]+=1
                 ScreenOne.lapos = 1
                 ScreenOne.latenencia = 1
@@ -662,18 +676,32 @@ class ScreenOne(Screen):
         ScreenOne.totalDefensaEnemigo = 90 * 4
 
         ScreenOne.comentario.text='Inicia el partido'
+        ScreenOne.fondo.source = 'medio2.JPG'
+        ScreenOne.sound = SoundLoader.load('football-audience.mp3')
+        ScreenOne.sound.play()
 
         ScreenOne.inicio=time.time()
-        ScreenOne.event=Clock.schedule_interval(ScreenOne.jugada, 0.5)
+
+        ScreenOne.event=Clock.schedule_interval(ScreenOne.jugada, 2)
+
+        ScreenOne.comentario.pos =(0,-265)
+        ScreenOne.comentario.color = [500, 500, 999, 1]
         #ScreenOne.event.timeout=8
 
     def jugada(self):
         partido_finalizado=False
-        if round(time.time()-ScreenOne.inicio) >= 10:
-            partido_finalizado=True
-            #Clock.unschedule(ScreenOne.jugada)
-            Clock.unschedule(ScreenOne.event, all=True)
-            #ScreenOne.event.cancel()
+        if round(time.time()-ScreenOne.inicio) >= 30:
+            Clock.unschedule(ScreenOne.event)
+            partido_finalizado = True
+
+            ScreenOne.fondo.source = 'partido_finalizado.PNG'
+            ScreenOne.comentario.text = 'Partido Finalizado ' + str(ScreenOne.marcador[0])+ ' - ' + str(ScreenOne.marcador[1])
+            ScreenOne.sound.stop()
+            ScreenOne.sound.source='referee-final-whistle.mp3'
+            ScreenOne.sound.volume=0.7
+            ScreenOne.sound.play()
+            ScreenOne.comentario.pos=(0,40)
+            ScreenOne.comentario.color = [1, 1, 1, 1]
 
         if partido_finalizado!=True:
             if ScreenOne.lapos==1 and ScreenOne.latenencia==1:
@@ -710,9 +738,6 @@ class ScreenOne(Screen):
                 ScreenOne.tiro(ScreenOne.latenencia)
             else:
                 print("Algo fallo",ScreenOne.lapos, ScreenOne.latenencia)
-        else:
-            print("Partido FINALIZADOSSS")
-            ScreenOne.changeIMG1('Partido Finalizado')
 
 
     def on_pre_enter(self):
@@ -725,16 +750,16 @@ class ScreenOne(Screen):
 
     def changeIMG1(img):
         if img=='Ellos Atacan':
-            ScreenOne.fondo.source = 'nosAtacan.JPG'
+            ScreenOne.fondo.source = 'nosAtacan2.JPG'
         elif img=='Nosotros Atacamos':
-            ScreenOne.fondo.source='atacamos.JPG'
+            ScreenOne.fondo.source='atacamos2.JPG'
         elif img=='En el Medio':
-            ScreenOne.fondo.source = 'en el medio.JPG'
+            ScreenOne.fondo.source = 'medio2.JPG'
         elif img=='Partido Finalizado':
             ScreenOne.fondo.source = 'P_field2'
             ScreenOne.comentario.text = 'Partido Finalizado' + str(ScreenOne.marcador)
         else:
-            print("Else")
+            print("Else",img)
 
 class ScreenThree(Screen):
 
